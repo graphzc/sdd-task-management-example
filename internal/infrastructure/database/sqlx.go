@@ -1,0 +1,20 @@
+package database
+
+import (
+	"github.com/graphzc/sdd-task-management-example/internal/config"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
+	"github.com/rs/zerolog/log"
+)
+
+// @WireSet("Infrastructure")
+func NewSQLXClient(config *config.Config) *sqlx.DB {
+	db, err := sqlx.Connect("postgres", config.Database.URI)
+	if err != nil {
+		log.Panic().
+			Err(err).
+			Msg("Failed to connect to the database")
+	}
+
+	return db
+}
