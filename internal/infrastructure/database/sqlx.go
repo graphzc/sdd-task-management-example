@@ -11,7 +11,7 @@ import (
 
 // @WireSet("Infrastructure")
 func NewSQLXClient(ctx context.Context, config *config.Config) *sqlx.DB {
-	db, err := sqlx.ConnectContext(ctx, "postgres", config.Database.URI)
+	db, err := sqlx.ConnectContext(ctx, config.Database.Driver, config.Database.URI)
 	if err != nil {
 		log.Panic().
 			Err(err).
