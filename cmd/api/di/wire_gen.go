@@ -10,7 +10,12 @@ import (
 	"github.com/graphzc/sdd-task-management-example/cmd/api/server"
 	"github.com/graphzc/sdd-task-management-example/internal/config"
 	"github.com/graphzc/sdd-task-management-example/internal/handlers"
+	"github.com/graphzc/sdd-task-management-example/internal/handlers/auth"
 	"github.com/graphzc/sdd-task-management-example/internal/handlers/common"
+	"github.com/graphzc/sdd-task-management-example/internal/infrastructure/context"
+	"github.com/graphzc/sdd-task-management-example/internal/infrastructure/database"
+	"github.com/graphzc/sdd-task-management-example/internal/repositories/user"
+	user2 "github.com/graphzc/sdd-task-management-example/internal/services/user"
 )
 
 // Injectors from wire.go:
@@ -18,7 +23,12 @@ import (
 func InitializeAPI() *server.EchoServer {
 	configConfig := config.NewConfig()
 	handler := common.New()
-	handlersHandlers := handlers.NewHandlers(handler)
+	contextContext := context.NewContext()
+	db := database.NewSQLXClient(contextContext, configConfig)
+	repository := user.NewRepository(db)
+	service := user2.NewService(configConfig, repository)
+	authHandler := auth.New(service)
+	handlersHandlers := handlers.NewHandlers(handler, authHandler)
 	echoServer := server.NewEchoServer(configConfig, handlersHandlers)
 	return echoServer
 }

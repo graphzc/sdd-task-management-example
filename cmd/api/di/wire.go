@@ -11,10 +11,10 @@ import (
 func InitializeAPI() *server.EchoServer {
 	wire.Build(
 		ConfigSet,
-		// InfrastructureSet,
+		InfrastructureSet,
 		HandlerSet,
-		// RepositorySet,
-		// ServiceSet,
+		RepositorySet,
+		ServiceSet,
 		// MiddlewareSet,
 		server.NewEchoServer,
 	)

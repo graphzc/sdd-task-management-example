@@ -18,7 +18,7 @@ func NewValidator() *Validator {
 	}
 }
 
-func (v *Validator) ValidateStruct(payload interface{}) error {
+func (v *Validator) ValidateStruct(payload any) error {
 	err := v.validate.Struct(payload)
 	if err == nil {
 		return nil
@@ -40,5 +40,5 @@ func (v *Validator) ValidateStruct(payload interface{}) error {
 	}
 
 	// Handle non-validation errors
-	return errors.New("validation error")
+	return err
 }

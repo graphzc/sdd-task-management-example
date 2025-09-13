@@ -8,3 +8,7 @@ type ErrorResponse struct {
 type HealthCheckResponse struct {
 	Status string `json:"status"`
 }
+
+type MessageResponse struct {
+	Message string `json:"message"`
+}

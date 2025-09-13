@@ -5,9 +5,12 @@ package di
 import (
 	config "github.com/graphzc/sdd-task-management-example/internal/config"
 	handlers "github.com/graphzc/sdd-task-management-example/internal/handlers"
+	auth "github.com/graphzc/sdd-task-management-example/internal/handlers/auth"
 	common "github.com/graphzc/sdd-task-management-example/internal/handlers/common"
 	context "github.com/graphzc/sdd-task-management-example/internal/infrastructure/context"
 	database "github.com/graphzc/sdd-task-management-example/internal/infrastructure/database"
+	user "github.com/graphzc/sdd-task-management-example/internal/repositories/user"
+	user2 "github.com/graphzc/sdd-task-management-example/internal/services/user"
 
 	"github.com/google/wire"
 )
@@ -18,10 +21,19 @@ var ConfigSet = wire.NewSet(
 
 var HandlerSet = wire.NewSet(
 	handlers.NewHandlers,
+	auth.New,
 	common.New,
 )
 
 var InfrastructureSet = wire.NewSet(
 	context.NewContext,
 	database.NewSQLXClient,
+)
+
+var RepositorySet = wire.NewSet(
+	user.NewRepository,
+)
+
+var ServiceSet = wire.NewSet(
+	user2.NewService,
 )

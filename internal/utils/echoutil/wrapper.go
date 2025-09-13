@@ -1,6 +1,7 @@
 package echoutil
 
 import (
+	"context"
 	"net/http"
 	"reflect"
 
@@ -13,7 +14,7 @@ import (
 // Supports both func(req) (res, err) and func() (res, err) signatures
 // For functions with request: func(req) (res, err) where req is the request DTO and res is the response DTO
 // For functions without request: func() (res, err) where res is the response DTO
-func WrapWithStatus[Req any, Res any](fn func(Req) (Res, error), status int) echo.HandlerFunc {
+func WrapWithStatus[Req any, Res any](fn func(context.Context, Req) (Res, error), status int) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var req Req
 		reqType := reflect.TypeOf(req)
@@ -40,7 +41,7 @@ func WrapWithStatus[Req any, Res any](fn func(Req) (Res, error), status int) ech
 		}
 
 		// Call business logic function
-		res, err := fn(req)
+		res, err := fn(c.Request().Context(), req)
 		if err != nil {
 			// Handle server errors
 			if serverErr, ok := err.(*servererr.ServerError); ok {

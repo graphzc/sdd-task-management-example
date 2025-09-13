@@ -18,5 +18,8 @@ func NewSQLXClient(ctx context.Context, config *config.Config) *sqlx.DB {
 			Msg("Failed to connect to the database")
 	}
 
+	log.Info().
+		Msg("Connected to the database")
+
 	return db
 }

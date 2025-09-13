@@ -9,7 +9,23 @@ func EchoHTTPErrorHandler(err error, c echo.Context) {
 	code := ErrorCodeInternalServerError
 	message := err.Error()
 
-	if serverErr, ok := err.(*ServerError); ok {
+	// Handle echo HTTP errors
+	if echoErr, ok := err.(*echo.HTTPError); ok {
+		switch echoErr.Code {
+		case 400:
+			code = ErrorCodeBadRequest
+			message = "Bad request"
+		case 401:
+			code = ErrorCodeUnauthorized
+			message = "Unauthorized"
+		case 403:
+			code = ErrorCodeForbidden
+			message = "Forbidden"
+		case 404:
+			code = ErrorCodeNotFound
+			message = "Route not found"
+		}
+	} else if serverErr, ok := err.(*ServerError); ok {
 		code = serverErr.Code
 	}
 
