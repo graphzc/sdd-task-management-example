@@ -1,11 +1,11 @@
 package server
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/graphzc/sdd-task-management-example/internal/config"
 	"github.com/graphzc/sdd-task-management-example/internal/handlers"
+	"github.com/graphzc/sdd-task-management-example/internal/middlewares"
 	"github.com/graphzc/sdd-task-management-example/internal/router"
 	"github.com/graphzc/sdd-task-management-example/internal/utils/servererr"
 	"github.com/graphzc/sdd-task-management-example/internal/utils/validator"
@@ -14,18 +14,20 @@ import (
 )
 
 type EchoServer struct {
-	ctx      context.Context
-	config   *config.Config
-	handlers *handlers.Handlers
+	config         *config.Config
+	handlers       *handlers.Handlers
+	authMiddleware middlewares.AuthMiddleware
 }
 
 func NewEchoServer(
 	config *config.Config,
 	handlers *handlers.Handlers,
+	authMiddleware middlewares.AuthMiddleware,
 ) *EchoServer {
 	return &EchoServer{
-		config:   config,
-		handlers: handlers,
+		config:         config,
+		handlers:       handlers,
+		authMiddleware: authMiddleware,
 	}
 }
 
@@ -43,7 +45,7 @@ func (s *EchoServer) Start() error {
 		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
 
-	router := router.NewRouter(e, s.handlers)
+	router := router.NewRouter(e, s.handlers, s.authMiddleware)
 
 	router.RegisterAPIRoutes()
 

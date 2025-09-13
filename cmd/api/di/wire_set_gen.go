@@ -7,9 +7,13 @@ import (
 	handlers "github.com/graphzc/sdd-task-management-example/internal/handlers"
 	auth "github.com/graphzc/sdd-task-management-example/internal/handlers/auth"
 	common "github.com/graphzc/sdd-task-management-example/internal/handlers/common"
+	task "github.com/graphzc/sdd-task-management-example/internal/handlers/task"
 	context "github.com/graphzc/sdd-task-management-example/internal/infrastructure/context"
 	database "github.com/graphzc/sdd-task-management-example/internal/infrastructure/database"
+	middlewares "github.com/graphzc/sdd-task-management-example/internal/middlewares"
+	task2 "github.com/graphzc/sdd-task-management-example/internal/repositories/task"
 	user "github.com/graphzc/sdd-task-management-example/internal/repositories/user"
+	task3 "github.com/graphzc/sdd-task-management-example/internal/services/task"
 	user2 "github.com/graphzc/sdd-task-management-example/internal/services/user"
 
 	"github.com/google/wire"
@@ -23,6 +27,7 @@ var HandlerSet = wire.NewSet(
 	handlers.NewHandlers,
 	auth.New,
 	common.New,
+	task.New,
 )
 
 var InfrastructureSet = wire.NewSet(
@@ -30,10 +35,16 @@ var InfrastructureSet = wire.NewSet(
 	database.NewSQLXClient,
 )
 
+var MiddlewareSet = wire.NewSet(
+	middlewares.NewAuthMiddleware,
+)
+
 var RepositorySet = wire.NewSet(
+	task2.NewRepository,
 	user.NewRepository,
 )
 
 var ServiceSet = wire.NewSet(
+	task3.NewService,
 	user2.NewService,
 )

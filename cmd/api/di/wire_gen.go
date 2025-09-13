@@ -12,9 +12,13 @@ import (
 	"github.com/graphzc/sdd-task-management-example/internal/handlers"
 	"github.com/graphzc/sdd-task-management-example/internal/handlers/auth"
 	"github.com/graphzc/sdd-task-management-example/internal/handlers/common"
+	task3 "github.com/graphzc/sdd-task-management-example/internal/handlers/task"
 	"github.com/graphzc/sdd-task-management-example/internal/infrastructure/context"
 	"github.com/graphzc/sdd-task-management-example/internal/infrastructure/database"
+	"github.com/graphzc/sdd-task-management-example/internal/middlewares"
+	"github.com/graphzc/sdd-task-management-example/internal/repositories/task"
 	"github.com/graphzc/sdd-task-management-example/internal/repositories/user"
+	task2 "github.com/graphzc/sdd-task-management-example/internal/services/task"
 	user2 "github.com/graphzc/sdd-task-management-example/internal/services/user"
 )
 
@@ -28,7 +32,11 @@ func InitializeAPI() *server.EchoServer {
 	repository := user.NewRepository(db)
 	service := user2.NewService(configConfig, repository)
 	authHandler := auth.New(service)
-	handlersHandlers := handlers.NewHandlers(handler, authHandler)
-	echoServer := server.NewEchoServer(configConfig, handlersHandlers)
+	taskRepository := task.NewRepository(db)
+	taskService := task2.NewService(configConfig, taskRepository)
+	taskHandler := task3.New(taskService)
+	handlersHandlers := handlers.NewHandlers(handler, authHandler, taskHandler)
+	authMiddleware := middlewares.NewAuthMiddleware(configConfig)
+	echoServer := server.NewEchoServer(configConfig, handlersHandlers, authMiddleware)
 	return echoServer
 }

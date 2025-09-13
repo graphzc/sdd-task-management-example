@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Wrap wraps a business logic function with Echo handler
+// WrapWithStatus wraps a business logic function with Echo handler
 // Supports both func(req) (res, err) and func() (res, err) signatures
 // For functions with request: func(req) (res, err) where req is the request DTO and res is the response DTO
 // For functions without request: func() (res, err) where res is the response DTO
@@ -38,10 +38,29 @@ func WrapWithStatus[Req any, Res any](fn func(context.Context, Req) (Res, error)
 					Message: err.Error(),
 				})
 			}
+		} else {
+			// Even for empty requests, we might need to bind path parameters
+			if err := c.Bind(&req); err != nil {
+				// Ignore binding errors for truly empty structs
+				if !isEmptyStruct(reqType) {
+					return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
+						Code:    servererr.ErrorCodeBadRequest.String(),
+						Message: "Invalid request format",
+					})
+				}
+			}
+		}
+
+		// Create context with user ID if available
+		ctx := c.Request().Context()
+		if userID := c.Get(UserIDContextKey); userID != nil {
+			if userIDStr, ok := userID.(string); ok {
+				ctx = SetUserIDInContext(ctx, userIDStr)
+			}
 		}
 
 		// Call business logic function
-		res, err := fn(c.Request().Context(), req)
+		res, err := fn(ctx, req)
 		if err != nil {
 			// Handle server errors
 			if serverErr, ok := err.(*servererr.ServerError); ok {
