@@ -15,4 +15,3 @@ type handler struct {
 func New() Handler {
 	return &handler{}
 }
-

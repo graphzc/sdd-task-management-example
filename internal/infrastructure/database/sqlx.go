@@ -1,6 +1,8 @@
 package database
 
 import (
+	"context"
+
 	"github.com/graphzc/sdd-task-management-example/internal/config"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -8,8 +10,8 @@ import (
 )
 
 // @WireSet("Infrastructure")
-func NewSQLXClient(config *config.Config) *sqlx.DB {
-	db, err := sqlx.Connect("postgres", config.Database.URI)
+func NewSQLXClient(ctx context.Context, config *config.Config) *sqlx.DB {
+	db, err := sqlx.ConnectContext(ctx, "postgres", config.Database.URI)
 	if err != nil {
 		log.Panic().
 			Err(err).
