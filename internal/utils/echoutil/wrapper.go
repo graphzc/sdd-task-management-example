@@ -4,10 +4,12 @@ import (
 	"context"
 	"net/http"
 	"reflect"
+	"time"
 
 	"github.com/graphzc/sdd-task-management-example/internal/dto"
 	"github.com/graphzc/sdd-task-management-example/internal/utils/servererr"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 // WrapWithStatus wraps a business logic function with Echo handler
@@ -16,6 +18,16 @@ import (
 // For functions without request: func() (res, err) where res is the response DTO
 func WrapWithStatus[Req any, Res any](fn func(context.Context, Req) (Res, error), status int) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		start := time.Now()
+
+		// Log incoming request
+		log.Info().
+			Str("method", c.Request().Method).
+			Str("path", c.Request().URL.Path).
+			Str("remote_addr", c.RealIP()).
+			Str("user_agent", c.Request().UserAgent()).
+			Msg("Incoming request")
+
 		var req Req
 		reqType := reflect.TypeOf(req)
 
@@ -25,6 +37,13 @@ func WrapWithStatus[Req any, Res any](fn func(context.Context, Req) (Res, error)
 		if !isEmpty {
 			// Bind request body to DTO only if request type is not empty
 			if err := c.Bind(&req); err != nil {
+				log.Error().
+					Str("method", c.Request().Method).
+					Str("path", c.Request().URL.Path).
+					Str("remote_addr", c.RealIP()).
+					Str("user_agent", c.Request().UserAgent()).
+					Msg("Failed to bind request")
+
 				return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
 					Code:    servererr.ErrorCodeBadRequest.String(),
 					Message: "Invalid request format",
@@ -33,6 +52,13 @@ func WrapWithStatus[Req any, Res any](fn func(context.Context, Req) (Res, error)
 
 			// Validate request if validator is available
 			if err := c.Validate(req); err != nil {
+				log.Error().
+					Str("method", c.Request().Method).
+					Str("path", c.Request().URL.Path).
+					Str("remote_addr", c.RealIP()).
+					Str("user_agent", c.Request().UserAgent()).
+					Msg("Request validation failed")
+
 				return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
 					Code:    servererr.ErrorCodeBadRequest.String(),
 					Message: err.Error(),
@@ -43,6 +69,13 @@ func WrapWithStatus[Req any, Res any](fn func(context.Context, Req) (Res, error)
 			if err := c.Bind(&req); err != nil {
 				// Ignore binding errors for truly empty structs
 				if !isEmptyStruct(reqType) {
+					log.Error().
+						Str("method", c.Request().Method).
+						Str("path", c.Request().URL.Path).
+						Str("remote_addr", c.RealIP()).
+						Str("user_agent", c.Request().UserAgent()).
+						Msg("Failed to bind request")
+
 					return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
 						Code:    servererr.ErrorCodeBadRequest.String(),
 						Message: "Invalid request format",
@@ -61,7 +94,18 @@ func WrapWithStatus[Req any, Res any](fn func(context.Context, Req) (Res, error)
 
 		// Call business logic function
 		res, err := fn(ctx, req)
+
+		duration := time.Since(start)
+
 		if err != nil {
+			// Log error response
+			log.Error().
+				Str("method", c.Request().Method).
+				Str("path", c.Request().URL.Path).
+				Dur("duration", duration).
+				Err(err).
+				Msg("Request completed with error")
+
 			// Handle server errors
 			if serverErr, ok := err.(*servererr.ServerError); ok {
 				return c.JSON(serverErr.Code.HTTPStatus(), dto.ErrorResponse{
@@ -76,6 +120,14 @@ func WrapWithStatus[Req any, Res any](fn func(context.Context, Req) (Res, error)
 				Message: err.Error(),
 			})
 		}
+
+		// Log successful response
+		log.Info().
+			Str("method", c.Request().Method).
+			Str("path", c.Request().URL.Path).
+			Dur("duration", duration).
+			Int("status", status).
+			Msg("Request completed successfully")
 
 		// Return success response
 		return c.JSON(status, res)
