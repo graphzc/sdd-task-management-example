@@ -206,7 +206,7 @@ func (h *handler) UpdateTaskStatusByIDWrapped(ctx context.Context, req *dto.Task
 func (h *handler) DeleteTaskByIDWrapped(ctx context.Context, req *dto.TaskDeleteRequest) (*dto.MessageResponse, error) {
 	userID, err := echoutil.GetUserIDFromContext(ctx)
 	if err != nil {
-return nil, servererr.NewError(
+		return nil, servererr.NewError(
 			servererr.ErrorCodeUnauthorized,
 			"user ID not found in context",
 		)
