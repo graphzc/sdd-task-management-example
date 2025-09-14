@@ -1,0 +1,14 @@
+all: true
+dir: '{{.InterfaceDir}}/mock/'
+filename: "mock_{{ .InterfaceName | snakecase }}.go"
+force-file-write: true
+formatter: goimports
+log-level: info
+structname: '{{.Mock}}{{.InterfaceName}}'
+pkgname: 'mock_{{.SrcPackageName}}'
+recursive: true
+require-template-schema-exists: true
+template: testify
+template-schema: '{{.Template}}.schema.json'
+packages:
+  github.com/graphzc/sdd-task-management-example:
