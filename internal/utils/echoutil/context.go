@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 
+	"github.com/graphzc/sdd-task-management-example/internal/domain/constants"
 	"github.com/labstack/echo/v4"
 )
 
-const UserIDContextKey = "user_id"
-
 // GetUserIDFromContext extracts user ID from Echo context
 func GetUserIDFromEchoContext(c echo.Context) (string, error) {
-	userID := c.Get(UserIDContextKey)
+	userID := c.Get(string(constants.UserIDContextKey))
 	if userID == nil {
 		return "", errors.New("user ID not found in context")
 	}
@@ -26,12 +25,12 @@ func GetUserIDFromEchoContext(c echo.Context) (string, error) {
 
 // SetUserIDInContext sets user ID in standard context
 func SetUserIDInContext(ctx context.Context, userID string) context.Context {
-	return context.WithValue(ctx, UserIDContextKey, userID)
+	return context.WithValue(ctx, constants.UserIDContextKey, userID)
 }
 
 // GetUserIDFromContext extracts user ID from standard context
 func GetUserIDFromContext(ctx context.Context) (string, error) {
-	userID := ctx.Value(UserIDContextKey)
+	userID := ctx.Value(constants.UserIDContextKey)
 	if userID == nil {
 		return "", errors.New("user ID not found in context")
 	}

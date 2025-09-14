@@ -86,10 +86,9 @@ func WrapWithStatus[Req any, Res any](fn func(context.Context, Req) (Res, error)
 
 		// Create context with user ID if available
 		ctx := c.Request().Context()
-		if userID := c.Get(UserIDContextKey); userID != nil {
-			if userIDStr, ok := userID.(string); ok {
-				ctx = SetUserIDInContext(ctx, userIDStr)
-			}
+		userID, err := GetUserIDFromEchoContext(c)
+		if err == nil && userID != "" {
+			ctx = SetUserIDInContext(ctx, userID)
 		}
 
 		// Call business logic function
