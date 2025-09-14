@@ -2,15 +2,22 @@ module github.com/graphzc/sdd-task-management-example
 
 go 1.25.0
 
-require github.com/labstack/echo/v4 v4.13.4
+require (
+	github.com/jmoiron/sqlx v1.4.0
+	github.com/labstack/echo/v4 v4.13.4
+	github.com/lib/pq v1.10.9
+	github.com/stretchr/testify v1.10.0
+)
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/jmoiron/sqlx v1.4.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/lib/pq v1.10.9 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (
@@ -26,7 +33,7 @@ require (
 	github.com/rs/zerolog v1.34.0
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/crypto v0.38.0
 	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
