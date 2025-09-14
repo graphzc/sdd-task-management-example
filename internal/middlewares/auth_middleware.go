@@ -5,6 +5,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/graphzc/sdd-task-management-example/internal/config"
+	"github.com/graphzc/sdd-task-management-example/internal/domain/enums"
 	"github.com/graphzc/sdd-task-management-example/internal/infrastructure/auth"
 	"github.com/graphzc/sdd-task-management-example/internal/utils/servererr"
 	"github.com/graphzc/sdd-task-management-example/internal/utils/tokenutil"
@@ -61,8 +62,7 @@ func (a *authMiddleware) Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		// Set claims and user ID to context
-		c.Set("profile", claims)
-		c.Set("user_id", claims.UserID)
+		c.Set(string(enums.UserIDContextKey), claims.UserID)
 
 		return next(c)
 	}
