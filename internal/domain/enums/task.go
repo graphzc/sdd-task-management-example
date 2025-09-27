@@ -8,6 +8,10 @@ const (
 	TaskStatusCompleted  TaskStatus = "COMPLETED"
 )
 
+func (ts TaskStatus) String() string {
+	return string(ts)
+}
+
 type TaskPriority int
 
 const (
@@ -15,3 +19,7 @@ const (
 	TaskPriorityMedium TaskPriority = 2
 	TaskPriorityHigh   TaskPriority = 3
 )
+
+func (tp TaskPriority) Int() int {
+	return int(tp)
+}
