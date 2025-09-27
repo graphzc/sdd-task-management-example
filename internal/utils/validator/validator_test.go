@@ -103,9 +103,9 @@ func (suite *ValidatorTestSuite) TestValidateStruct_InvalidEmail() {
 func (suite *ValidatorTestSuite) TestValidateStruct_MultipleErrors() {
 	// Arrange
 	invalidStruct := TestValidStruct{
-		Name:  "A", // Too short
+		Name:  "A",             // Too short
 		Email: "invalid-email", // Invalid format
-		Age:   200, // Too high
+		Age:   200,             // Too high
 	}
 
 	// Act
@@ -179,8 +179,8 @@ func (suite *ValidatorTestSuite) TestValidateStruct_ComplexRules() {
 func (suite *ValidatorTestSuite) TestValidateStruct_ComplexRules_Invalid() {
 	// Arrange
 	invalidComplex := TestComplexStruct{
-		Username: "jo", // Too short
-		Password: "weak", // Too short
+		Username: "jo",                         // Too short
+		Password: "weak",                       // Too short
 		Tags:     []string{"tag1", "", "tag3"}, // Empty tag in slice
 		IsActive: false,
 	}
@@ -246,7 +246,7 @@ func (suite *ValidatorTestSuite) TestValidator_EchoValidate_InvalidData() {
 
 	// Assert
 	assert.Error(suite.T(), err)
-	
+
 	// Check if it's a ServerError
 	serverErr, ok := err.(*servererr.ServerError)
 	assert.True(suite.T(), ok)
@@ -436,7 +436,7 @@ func TestValidator_EdgeCases(t *testing.T) {
 			Email string
 			Age   int
 		}
-		
+
 		err := validator.ValidateStruct(NoValidationStruct{
 			Name:  "",
 			Email: "invalid",
@@ -478,7 +478,7 @@ func TestValidator_Concurrent(t *testing.T) {
 				Email: "john@example.com",
 				Age:   25,
 			}
-			
+
 			err := validator.ValidateStruct(testStruct)
 			results <- err
 		}(i)

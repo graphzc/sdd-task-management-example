@@ -85,7 +85,7 @@ func (suite *ServerErrorTestSuite) TestServerError_Error() {
 func (suite *ServerErrorTestSuite) TestServerError_ErrorInterface() {
 	// Test that ServerError implements the error interface
 	var err error = NewError(ErrorCodeInternalServerError, "Test error")
-	
+
 	assert.NotNil(suite.T(), err)
 	assert.Equal(suite.T(), "Test error", err.Error())
 }
@@ -140,11 +140,11 @@ func (suite *ServerErrorTestSuite) TestNewError_WithSpecialCharacters() {
 func (suite *ServerErrorTestSuite) TestServerError_StructFields() {
 	// Test that the struct has the expected field names and JSON tags
 	err := NewError(ErrorCodeForbidden, "Access forbidden")
-	
+
 	// Check field values are accessible
 	assert.Equal(suite.T(), ErrorCodeForbidden, err.Code)
 	assert.Equal(suite.T(), "Access forbidden", err.Message)
-	
+
 	// Note: JSON tag testing would require reflection or actual JSON marshaling
 	// which is typically tested in integration tests
 }
@@ -197,7 +197,7 @@ func TestNewError_TableDriven(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			err := NewError(tc.code, tc.message)
-			
+
 			assert.NotNil(t, err)
 			assert.Equal(t, tc.code, err.Code)
 			assert.Equal(t, tc.message, err.Message)
@@ -245,7 +245,7 @@ func BenchmarkServerError_Error(b *testing.B) {
 func TestServerError_ErrorInterface_Compatibility(t *testing.T) {
 	// Test that our error can be used where standard error is expected
 	serverErr := NewError(ErrorCodeBadRequest, "Test error")
-	
+
 	// Function that accepts error interface
 	processError := func(err error) string {
 		if err != nil {
@@ -253,7 +253,7 @@ func TestServerError_ErrorInterface_Compatibility(t *testing.T) {
 		}
 		return "no error"
 	}
-	
+
 	result := processError(serverErr)
 	assert.Equal(t, "Test error", result)
 }
@@ -274,7 +274,7 @@ func TestErrorCode_StringRepresentation(t *testing.T) {
 	for _, code := range codes {
 		// String method should return the same as string conversion
 		assert.Equal(t, string(code), code.String())
-		
+
 		// Should not be empty
 		assert.NotEmpty(t, code.String())
 	}
